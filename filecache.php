@@ -1,13 +1,17 @@
 <?php
 /**
  * Clase para crear un archivo de cache,
- * su uso es muy similar a la clase 
- * memcache, a diferencia que este lo guarda
- * en el disco y no en la memoria
+ * para aplicaciones de alto trafico se
+ * recomienda el uso de otras herramientas
+ * como memcached para disminuir la lectura
+ * y escritura en disco duro.
  * 
  * Creado por: Roman Barrios
  * Fecha: 05-09-2015
  */
+define("SALTO_LINEA_TEXTO",
+'
+'); // Para usar en saltos de linea como texto plano
 class Filecache_Class {
 	/**
 	 * Crea el objeto del archivo a utilizar
@@ -73,7 +77,7 @@ class Filecache_Class {
 			fwrite($cached, ob_get_contents());
 			fclose($cached);
 		}
-		ob_end_flush(); // Envia la salida al navegador 
+		ob_end_flush(); // Retorna la salida 
 		return TRUE;
 	}
 	
@@ -126,8 +130,8 @@ class Filecache_Class {
 		$tamano = count($arreglo);
 		// Esibe una linea por cada elimento del cache
 		for ( $i = 0 ; $i < $tamano ; $i++ ) {
-            fwrite($cached, $arreglo[$i] . SALTO_LINEA_TEXTO );
-        }
+            		fwrite($cached, $arreglo[$i] . SALTO_LINEA_TEXTO );
+        	}
 		fclose($cached);
 		return TRUE;
 	}
@@ -137,9 +141,9 @@ class Filecache_Class {
 	 * Metodo para obtener variables php por un arreglo
 	 * Si existe lo retorna, en caso de no
 	 * existir devuelve un FALSE
-     * 
-     * Esta version permite leer los arreglos directamente
-     * si los mismos fueron guardados tipo JSON
+         * 
+    	 * Esta version permite leer los arreglos directamente
+     	 * si los mismos fueron guardados tipo JSON
 	 *
 	 * @param: $key nombre de la key
 	 * @cachetime: tiempo maximo del cache en segundos.
@@ -158,10 +162,10 @@ class Filecache_Class {
 		if ( file_exists($this->filecache) && time() - $cachetime < filemtime($this->filecache) ) {
 			// Obtiene el arreglo
 			$this->arreglo_cache = array();	            
-            $archivo_cache = fopen($this->filecache, 'r');
-            $this->arreglo_cache = json_decode(fgets($archivo_cache),TRUE);
-            fclose($archivo_cache);
-			return TRUE;
+		    	$archivo_cache = fopen($this->filecache, 'r');
+		    	$this->arreglo_cache = json_decode(fgets($archivo_cache),TRUE);
+		    	fclose($archivo_cache);
+				return TRUE;
 		}
 		else {
 			return FALSE;
@@ -172,7 +176,7 @@ class Filecache_Class {
 	 * Funcion para guardar arreglo archivo de cache.
 	 * Si existe lo retorna, en caso de no
 	 * existir devuelve un FALSE
-     * Este metodo permite guardar los arreglos en cache JSONs
+    	 * Este metodo permite guardar los arreglos en cache JSONs
 	 *
 	 * @param: $key nombre de la key
 	 */
@@ -181,7 +185,7 @@ class Filecache_Class {
 		$this->archivo($key);
 		// Se hace el cache hacia el archivo
 		$cached = fopen($this->filecache, 'w');        
-        fwrite($cached, json_encode($arreglo) );
+        	fwrite($cached, json_encode($arreglo) );
 		fclose($cached);
 		return TRUE;
 	}
@@ -196,8 +200,8 @@ class Filecache_Class {
 		$this->archivo($key);
 		// Si existe lo elimina
 		if ( file_exists($this->filecache) ) {
-            unlink($this->filecache);
-        }
+           	 unlink($this->filecache);
+        	}
 	}
 		
 	
